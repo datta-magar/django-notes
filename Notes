@@ -1,0 +1,243 @@
+Django Advanced
+
+#Build a backend REST API with python & Django
+
+1. App design
+2. Into to TDD
+3. System setup
+4. Project setup
+5. Configure GitHub actions
+6. TDD with Django
+7. Configure database
+8. Create user model
+9. Setup Django admin
+10. API documentation
+11. Build user API
+12. Build recipe API
+13. Build tags API
+14. Build ingredients API
+15. Recipe image API
+16. Implement filtering
+17. Deploy to AWS
+18. Summery
+19. Upgrades*
+
+App Design
+* 19 API Endpoints
+- managing users, recipes, tags, ingrediants
+* User authentication 
+* Browsable admin interface
+* Browsable API (swagger)
+
+Technologies
+Python
+- Programming language
+- Foundation of API
+Django
+- Python web framework
+- Handels
+* URL mapping
+* Object relational mapper
+* Admin site
+Django REST Framework
+- Django add-on
+- Build REST APIs
+PostgreSQL
+- Database
+Docker
+- Development environment
+- Deployment
+Swagger
+- Documentation
+- Browsable API (testing)
+Github Actions
+- Automation (testing and linting)
+
+Django project structure 
+* app/ - Django project
+* app/core/ - code shared between multiple apps
+* app/user/ - user related code
+* app/recipe/ - recipe related code
+
+TDD Test driven development
+Unit tests
+- Code which tests code
+    - Sets up conditions / inputs
+    - Runs a piece of a code
+    - Checks output with assertions
+- Many Benefits
+    - Ensures code runs as expected 
+    - Catches bugs
+    - Improves reliability
+    - Provides confidence
+TDD process
+Write test -> run test (fails) -> add feature -> run tests (passes) -> re-factor -> repeat run tests (passess)
+Why use TDD
+- Better understanding of code
+- Make changes with confidence
+- Reduces bugs
+
+What to install 
+VSCode
+Docker desktop / docker for linux (verify % docker —version % docker-compose —version 
+Git (verify % git —version)
+
+New project overview
+Why use docker
+- Consistent dev and prod environment
+- Easier collaboration
+- Capture all dependancies as code (python requirements, os dependancies)
+- Easier cleanup
+How to use docker
+- Define Dockerfile
+- Create docker compose configuration 
+- Run all command via docker compose
+Docker on GitHub actions
+* Docker hub introduces rate limit:
+    * 100 pulls / 6hr for unauthenticated users
+    * 200 pulls for authenticated users
+* GitHub actions is a shared service
+    * 100 pulls / 6hr for all users
+* Authenticate with docker hub
+    * Create account
+    * Setup credentials 
+    * Login before running. Job
+    * Get 200 pull / 6hr for free
+
+Create GitHub actions
+Create docker token on docker hub by clicking profile
+GitHub repo setting - secrets - add - DOCKERHUB_TOKEN & DOCKERHUB_USER
+
+Docker & Django
+* Many benefits
+    * Consistent dev & prod env
+    * Easier collaboration
+    * Capture all dependancies as code
+    * Easier cleanup
+* Drawbacks
+    * VSCode unable to access interpreter
+    * More difficult to use integrated features
+Configure docker
+* Create Dockerfile
+* Lists step for creating project
+    * Choose a base image (python)
+    * Install dependancies
+    * Setup users
+Docker compose
+* How our docker image(s) should be used
+* Define our “services”
+    * Name (eg: app)
+    * Port mappings
+    * Volume mappings
+Using docker compose
+* Run all the commands through docker compose
+% docker-compose run --rm app sh -c "python manage.py collectstatic"
+* docker-compose runs the Docker compose command
+* run will start a specific container defined in config
+* -rm removes the container
+* App is the name of the service
+* sh -c passes in a shell command
+* “” Command to run inside container
+
+Define python requirements
+requirements.txt
+Django>=3.2.4,<3.3
+djangorestframework>=3.12.4,<3.13
+
+Create project Dockerfile
+Dockerfile
+FROM python:3.9-alpine3.13
+LABEL maintainer="londonappdeveloper.com"
+
+ENV PYTHONBUFFERED=1
+
+COPY ./requirements.txt /tmp/requirements.txt
+COPY ./app /app
+WORKDIR /app
+EXPOSE 8000
+
+RUN python -m venv /py && \
+    /py/bin/pip install --upgrade pip && \
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    rm -rf /tmp && \
+    adduser \
+        --disabled-password \
+        --no-create-home \
+        django-user
+
+ENV PATH="/py/bin:$PATH"
+
+USER django-user
+
+Create docker compose configuration
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+
+Linting and Tests
+Linting
+- Tool to check code formatting
+- Highlights error, typos, formatting issue
+- Install flake8 package
+- Run it through docker compose (% docker-compose run -rm app sh -c “flake8”)
+- Always solve listing error’s in bottom up approach
+Testing
+- Django test suite
+- Setup tests per Django app
+- Run tests through docker compose (% docker-compose run —rm app sh -c “python manage.py test”)
+
+Configure flake8
+.flake8
+
+[flake8]
+exclude =
+    migrations,
+    __pycache__,
+    manage.py,
+    settings.py
+% docker-compose run --rm app sh -c "flake8"
+
+Create Django project
+% docker-compose run —rm app sh -c “django-admin startproject app .”
+
+Run project with docker compose
+% docker-compose up
+Winner winner chicken dinner | django installation worked successfully 
+
+Github actions
+- Automation tool
+- Similar to Travis-CI, Gitlab CI/CD, Jenkins
+- Run jobs when code changes
+- Automate tasks
+Common uses
+- Deployment
+- Code linting
+- Unit tests
+Trigger (push to github) -> Job (run unit tests) -> result (successfull/fail) 
+Pricing 
+- Charged per minute
+- 2,000 free minutes
+- Various plans available
+
+Configuring GitHub actions
+How
+* Create a config file at .github/workflows/checks.yaml
+    * Set trigger
+    * Add steps for running testing and listing
+* Configure docker hub path
+Docker hub
+- Needed to pull base images
+- Rate limit anonymous 100/6h
+- Authenticated 200/6h
+- Authenticate with docker hub
+- Additional plans available
+
