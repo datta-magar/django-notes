@@ -67,5 +67,67 @@ override authentication
 
 common testing problems
 
+COnfigure Database
+PostgreSQL
+popular open source DB
+integrates well with django
+docker compose
+defined with project reusable
+persistant data using volumes
+handles network configuration
+environment variable configuration
+
+Network connectivity
+set depends_on on app service to start db first
+
+steps for configuring database
+configure django
+tell django how to connect
+install database adopter dependancies
+install the tool django uses to connect
+update python requirements
+
+django needs to know
+engine (type of database)
+hostmname (ip or domain name for database)
+port 
+database name
+username
+password
+defined in settings.py file
+
+envoronment variables
+pullconfig values from environment variables
+easily passed to docker
+used in local dev or prod
+single place to configure project
+easy to do with python
+% os.environment.get('DB-HOST')
+
+Psycopg2 - the package that you need in order for django to connect to our database
+most popular postgresql adaptor for python
+supported by django
+installetion options
+psycopg2-binary
+OK for development
+not good for production
+Psycopg2
+compiles from source
+required additional dependancies
+easy to install with docker
+
+installing Psycopg2 
+List of package dependancies in docs
+C compiler
+python-3 dev
+libpq-dev
+equivalent packeges for alpine
+postgres-sql client
+build-base
+postgres-sql-dev
+musl-dev
+found by searching and trial and error
+docker best practice:
+clean up build dependancies
 
 
