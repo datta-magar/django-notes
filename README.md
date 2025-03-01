@@ -33,3 +33,39 @@ Useful for testing code that uses database
 test command
 % python manage.py test
 
+Mocking
+overide or change behaviour of dependancies
+avoid unintented side effects
+isolate code being tested
+
+why use mocking
+avoid relying on extarnal services
+cant gaurenty they will be availble
+makes tests unprdictable
+avoid unintended consequances
+accidently sending emails
+overloading ecxtarnal services
+
+example
+register_user() -> create_in_db() -> send_welcome_email() -> email sent
+prevent email being sent 
+ensure send_welcome_email() called correctly
+Another benefits
+spped up tests
+
+how to mock code
+use unittest.mock (built python)
+MagicMock/Mock - replace real object
+patch - overrides code for test
+
+Testing web requeasts (APIs)
+make actual requests
+django rest framework gives APIClient
+make requests
+check result
+override authentication
+
+common testing problems
+
+
+
